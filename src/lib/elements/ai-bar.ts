@@ -51,11 +51,8 @@ export class AIBar extends HTMLElement {
   );
 
   connectedCallback() {
-    this.querySelector("drag-handle")?.setAttribute("slot", "toolbar");
-    this.querySelector("aoai-connection-button")?.setAttribute("slot", "toolbar");
-    this.querySelector("walkie-talkie-button")?.setAttribute("slot", "toolbar");
-
     this.querySelector("script")?.remove();
+    this.querySelectorAll(`[provides*="toolbar-item"]`).forEach((el) => el.setAttribute("slot", "toolbar"));
 
     this.addEventListener("event", (event) => {
       const typedEvent = event as CustomEvent<AIButtonEventData>;
@@ -64,11 +61,12 @@ export class AIBar extends HTMLElement {
       this.handleRecognition(typedEvent);
       this.handleGenerated(typedEvent);
       this.handleDragged(typedEvent);
+      this.handleTextSubmitted(typedEvent);
     });
   }
 
   public getAzureOpenAICredentials() {
-    const provider = this.querySelector<AzureOpenAIProvider>(`[provides="aoai-credentials"]`);
+    const provider = this.querySelector<AzureOpenAIProvider>(`[provides*="aoai-credentials"]`);
     if (!provider) throw new Error("No credentials provider found");
 
     const cred = provider.getAzureOpenAICredentials();
@@ -81,15 +79,15 @@ export class AIBar extends HTMLElement {
     if (!typedEvent.detail.pttPressed) return;
     typedEvent.stopPropagation();
 
-    this.querySelector<TextToSpeechProvider>(`[provides="tts"]`)?.clear();
-    this.querySelector<SpeechToTextProvider>(`[provides="stt"]`)?.start();
+    this.querySelector<TextToSpeechProvider>(`[provides*="tts"]`)?.clear();
+    this.querySelector<SpeechToTextProvider>(`[provides*="stt"]`)?.start();
   }
 
   private handleFinishRecording(typedEvent: CustomEvent<AIButtonEventData>) {
     if (!typedEvent.detail.pttReleased) return;
     typedEvent.stopPropagation();
 
-    this.querySelector<SpeechToTextProvider>(`[provides="stt"]`)?.stop();
+    this.querySelector<SpeechToTextProvider>(`[provides*="stt"]`)?.stop();
   }
 
   private handleRecognition(typedEvent: CustomEvent<AIButtonEventData>) {
@@ -97,7 +95,7 @@ export class AIBar extends HTMLElement {
     typedEvent.stopPropagation();
 
     if (typedEvent.detail.recognized.isFinal) {
-      this.querySelector<LlmProvider>(`[provides="llm"]`)?.submit(typedEvent.detail.recognized.text);
+      this.querySelector<LlmProvider>(`[provides*="llm"]`)?.submit(typedEvent.detail.recognized.text);
     }
   }
 
@@ -106,7 +104,7 @@ export class AIBar extends HTMLElement {
     typedEvent.stopPropagation();
 
     // assuming whole sentence
-    this.querySelector<TextToSpeechProvider>(`[provides="tts"]`)?.queue(typedEvent.detail.sentenceGenerated);
+    this.querySelector<TextToSpeechProvider>(`[provides*="tts"]`)?.queue(typedEvent.detail.sentenceGenerated);
   }
 
   private handleDragged(typedEvent: CustomEvent<AIButtonEventData>) {
@@ -115,6 +113,13 @@ export class AIBar extends HTMLElement {
 
     this.style.setProperty("--offsetX", typedEvent.detail.dragged.deltaX + "px");
     this.style.setProperty("--offsetY", typedEvent.detail.dragged.deltaY + "px");
+  }
+
+  private handleTextSubmitted(typedEvent: CustomEvent<AIButtonEventData>) {
+    if (!typedEvent.detail.textSubmitted) return;
+    typedEvent.stopPropagation();
+
+    this.querySelector<LlmProvider>(`[provides*="llm"]`)?.submit(typedEvent.detail.textSubmitted);
   }
 }
 

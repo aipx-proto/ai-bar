@@ -3,6 +3,7 @@ export interface AIButtonEventData {
   pttReleased?: boolean;
   recognized?: Recognition;
   sentenceGenerated?: string;
+  textSubmitted?: string;
   dragged?: {
     deltaX: number;
     deltaY: number;

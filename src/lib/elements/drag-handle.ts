@@ -26,6 +26,7 @@ export class DragHandle extends HTMLElement {
   };
 
   connectedCallback() {
+    this.setAttribute("provides", "toolbar-item");
     this.shadowRoot.querySelector("button")!.onmousedown = this.dragMouseDown.bind(this);
   }
 

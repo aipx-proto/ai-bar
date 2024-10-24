@@ -41,7 +41,7 @@ export class AoaiConnectionButton extends HTMLElement implements AzureOpenAIProv
   );
 
   connectedCallback() {
-    this.setAttribute("provides", "aoai-credentials");
+    this.setAttribute("provides", "aoai-credentials, toolbar-item");
     this.shadowRoot.querySelector("button")?.addEventListener("click", () => {
       this.shadowRoot.querySelector("dialog")?.showModal();
     });

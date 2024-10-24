@@ -5,10 +5,6 @@ export class WalkieTalkieButton extends HTMLElement {
   shadowRoot = attachShadowHtml(
     this,
     `
-<style>
-:host {
-  } 
-</style>
 <button>
   <span part="leading-visual">🎙️</span>
   <span part="label">Hold to talk</span>
@@ -17,6 +13,7 @@ export class WalkieTalkieButton extends HTMLElement {
   );
 
   connectedCallback() {
+    this.setAttribute("provides", "toolbar-item");
     this.shadowRoot.querySelector("button")!.addEventListener("mousedown", () => {
       emit(this, {
         pttPressed: true,
