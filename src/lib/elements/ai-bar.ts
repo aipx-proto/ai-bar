@@ -25,6 +25,16 @@ export class AIBar extends HTMLElement {
     stylesheet.innerHTML = `
 ai-bar {
   display: flex;
+
+  *,*::before,*::after {
+    box-sizing: border-box;
+  }
+
+  button,
+  input {
+    font: inherit;
+    padding: 0.25rem;
+  }
 }
     `;
 

@@ -2,6 +2,16 @@ import { emit } from "./events";
 
 export class WalkieTalkieButton extends HTMLElement {
   connectedCallback() {
+    const stylesheet = document.createElement("style");
+    stylesheet.innerHTML = `
+walkie-talkie-button {
+  button {
+    font: inherit;
+  }
+}`;
+
+    this.appendChild(stylesheet);
+
     const button = document.createElement("button");
     button.innerHTML = `<span part="leading-visual">🎙️</span><span part="label">Hold to talk</span>`;
 

@@ -1,12 +1,12 @@
 import type { AoaiCredentialsProvider } from "./ai-bar";
 
-export class OptionsMenu extends HTMLElement implements AoaiCredentialsProvider {
+export class AoaiConnectionButton extends HTMLElement implements AoaiCredentialsProvider {
   connectedCallback() {
     this.setAttribute("provides", "aoai-credentials");
 
     this.innerHTML = `
 <style>
-options-menu {
+aoai-connection-button {
   .two-column {
     display: grid;
   }
@@ -20,10 +20,13 @@ options-menu {
     gap: 1rem;
   }
 
+
+
 }
 </style>
 <button>⚙️</button>
 <dialog style="width: min(40rem, calc(100vw - 32px))">
+  <h2>Azure OpenAI Connection</h2>
   <form method="dialog" id="creds-form">
     <div class="two-column">
       <label for="aoai-endpoint">AOAI Endpoint</label>
@@ -73,6 +76,6 @@ options-menu {
   }
 }
 
-export function defineOptionsMenu(tagName = "options-menu") {
-  customElements.define(tagName, OptionsMenu);
+export function defineAoaiConnectionButton(tagName = "aoai-connection-button") {
+  customElements.define(tagName, AoaiConnectionButton);
 }
