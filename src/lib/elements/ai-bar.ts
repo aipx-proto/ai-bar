@@ -54,8 +54,6 @@ ai-bar {
       this.handleRecognition(typedEvent);
       this.handleGenerated(typedEvent);
     });
-
-    this.addEventListener;
   }
 
   private handleStartRecording(typedEvent: CustomEvent<AIButtonEventData>) {
@@ -77,7 +75,9 @@ ai-bar {
     if (!typedEvent.detail.recognized) return;
     typedEvent.stopPropagation();
 
-    this.querySelector<LlmProvider>(`[provides="llm"]`)?.submit(typedEvent.detail.recognized.text);
+    if (typedEvent.detail.recognized.isFinal) {
+      this.querySelector<LlmProvider>(`[provides="llm"]`)?.submit(typedEvent.detail.recognized.text);
+    }
   }
 
   private handleGenerated(typedEvent: CustomEvent<AIButtonEventData>) {
@@ -85,7 +85,6 @@ ai-bar {
     typedEvent.stopPropagation();
 
     // assuming whole sentence
-    console.log(typedEvent.detail.sentenceGenerated);
     this.querySelector<TextToSpeechProvider>(`[provides="tts"]`)?.queue(typedEvent.detail.sentenceGenerated);
   }
 
