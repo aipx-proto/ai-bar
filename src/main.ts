@@ -1,3 +1,5 @@
+import { AzureOpenAI } from "openai";
+import type { Assistant } from "openai/resources/beta/assistants";
 import p5 from "p5";
 import { defineVoiceNode, VoiceNode } from "./lib/voice-node";
 
@@ -5,8 +7,10 @@ defineVoiceNode();
 
 const voiceNode = document.querySelector<VoiceNode>("voice-node")!;
 const p5Container = document.querySelector<HTMLDivElement>("#root")!;
-
 const credsForm = document.querySelector<HTMLFormElement>("#creds-form")!;
+let aoaiClient: AzureOpenAI;
+let threadId: string;
+let assistant: Assistant;
 
 credsForm.addEventListener("submit", (event) => event.preventDefault());
 credsForm.addEventListener("change", () => {
@@ -16,22 +20,49 @@ credsForm.addEventListener("change", () => {
   localStorage.setItem("creds", JSON.stringify(dataDict));
   handleCredsChange(dataDict as Record<string, string>);
 });
+// immediately load creds from local storage at the start
+handleCredsChange(JSON.parse(localStorage.getItem("creds") ?? "{}"));
 
-handleCredsChange(JSON.parse(localStorage.getItem("creds") ?? "{}")); // initial load
-
-function handleCredsChange(creds: Record<string, string>) {
+async function handleCredsChange(creds: Record<string, string>) {
   Object.entries(creds).forEach(([key, value]) => {
     (credsForm.querySelector(`[name="${key}"]`) as HTMLInputElement)!.value = value as string;
   });
 
   voiceNode.setAttribute("data-api-key", creds["speech-key"]);
+
+  aoaiClient = new AzureOpenAI({
+    dangerouslyAllowBrowser: true,
+    apiKey: creds["aoai-key"] as string,
+    apiVersion: "2024-07-01-preview",
+    endpoint: creds["aoai-endpoint"] as string,
+  });
+  assistant = await aoaiClient.beta.assistants.retrieve(creds["aoai-assistant-id"] as string);
+  console.log(`[chat] assistant id: ${assistant.id}`);
+  if (!threadId) {
+    const thread = await aoaiClient.beta.threads.create({});
+    threadId = thread.id;
+    console.log(`[chat] thread id: ${threadId}`);
+  }
 }
 
-const thread = [{ role: "system", content: "You are an expert in business process modeling. Guide user to best model their business process." }];
-
-voiceNode.addEventListener("transcriptiondone", (event) => {
+voiceNode.addEventListener("transcriptiondone", async (event) => {
   const text = (event as CustomEvent).detail;
-  thread.push({ role: "user", content: text });
+  const response = await aoaiClient.beta.threads.messages.create(threadId!, {
+    role: "user",
+    content: text,
+  });
+
+  const run = aoaiClient.beta.threads.runs.stream(threadId!, { assistant_id: assistant.id });
+
+  run
+    .on("textCreated", () => console.log("\nassistant > "))
+    .on("textDelta", (textDelta) => console.log(textDelta.value))
+    .on("toolCallCreated", (toolCall) => console.log(`\nassistant > ${toolCall.type}\n\n`))
+    .on("toolCallDelta", (toolCallDelta, snapshot) => {
+      // you can print out tool call intermediate results here
+    });
+
+  console.log(response.content);
 });
 
 const sketch = (p: p5) => {

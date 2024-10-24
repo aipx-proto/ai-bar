@@ -6,20 +6,38 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vite + TS</title>
+  <style>
+    body {
+      font-family: monospace;
+    }
+
+    .two-column-form {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.25rem 1rem;
+
+      label {
+        justify-self: end;
+      }
+    }
+  </style>
 </head>
 
 <body>
   <div id="root"></div>
   <voice-node data-api-key="REPLACE_ME"></voice-node>
-  <form style="display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 1rem" id="creds-form">
-    <label>Speech Service Region</label>
-    <input type="text" name="speech-region" placeholder="eastus" />
-    <label>Speech API Key</label>
-    <input type="password" name="speech-key" />
-    <label>Azure OpenAI Endpoint</label>
-    <input type="url" name="aoai-endpoint" />
-    <label>Azure OpenAI Key</label>
-    <input type="password" name="aoai-key" />
+  <form class="two-column-form" id="creds-form">
+    <label for="speech-region">Speech Service Region</label>
+    <input type="text" id="speech-region" name="speech-region" placeholder="eastus" />
+    <label for="speech-key">Speech API Key</label>
+    <input type="password" id="speech-key" name="speech-key" />
+    <label for="aoai-endpoint">AOAI Endpoint</label>
+    <input type="url" id="aoai-endpoint" name="aoai-endpoint"
+      placeholder="https://replace-endpoint-name.openai.azure.com/" />
+    <label for="aoai-key">AOAI Key</label>
+    <input type="password" id="aoai-key" name="aoai-key" />
+    <label for="aoai-assistant-id">AOAI Assistant ID</label>
+    <input type="text" id="aoai-assistant-id" name="aoai-assistant-id" placeholder="asst_XXXXXXXXXXXXXXXXXXXXXXXX" />
   </form>
   <script type="module" src="/src/main.ts"></script>
 </body>
