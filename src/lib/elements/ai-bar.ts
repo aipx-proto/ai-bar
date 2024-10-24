@@ -31,23 +31,20 @@ export class AIBar extends HTMLElement {
     `
     <style>
 :host {
-  display: flex;
-
+  
   *,*::before,*::after {
     box-sizing: border-box;
   }
 
-  button,
-  input {
-    font: inherit;
-    padding: 0.25rem;
+  #widget-container {
+    display: flex;
+    transform: translate(var(--offsetX, 0), var(--offsetY, 0));
   }
-
-
-  transform: translate(var(--offsetX, 0), var(--offsetY, 0));
 }
     </style>
-    <slot name="toolbar"></slot>
+    <div id="widget-container">
+      <slot name="toolbar"></slot>
+    </div>
 `
   );
 
