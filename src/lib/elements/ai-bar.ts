@@ -30,6 +30,7 @@ export class AIBar extends HTMLElement {
     stylesheet.innerHTML = `
 ai-bar {
   display: flex;
+  font-family: monospace;
 
   *,*::before,*::after {
     box-sizing: border-box;
