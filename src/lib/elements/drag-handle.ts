@@ -1,34 +1,32 @@
+import { attachShadowHtml } from "../wc-utils/attach-html";
 import { emit } from "./events";
 
 export class DragHandle extends HTMLElement {
-  private coords = {
-    elementX: 0,
-    elementY: 0,
-    mouseDeltaX: 0,
-    mouseDeltaY: 0,
-    mouseStartX: 0,
-    mouseStartY: 0,
-  };
-
-  connectedCallback() {
-    this.innerHTML = `
+  shadowRoot = attachShadowHtml(
+    this,
+    `
     <style>
-    drag-handle {
+    :host {
       button {
         cursor: move;
       } 
     }
     </style>
     <button>⣿</button>
-    `;
+    `
+  );
 
-    this.dragElement(this);
-  }
+  private coords = {
+    elementX: 0, // where the element is when the page loads
+    elementY: 0,
+    mouseStartX: 0, // mouse start position when drag starts
+    mouseStartY: 0,
+    mouseDeltaX: 0, // how much mouse moved per dragging
+    mouseDeltaY: 0,
+  };
 
-  // Make the DIV element draggable:
-
-  private dragElement(elmnt: HTMLElement) {
-    elmnt.onmousedown = this.dragMouseDown.bind(this);
+  connectedCallback() {
+    this.shadowRoot.querySelector("button")!.onmousedown = this.dragMouseDown.bind(this);
   }
 
   private dragMouseDown(mouseEvent: MouseEvent) {
