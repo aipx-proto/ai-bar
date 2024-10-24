@@ -11,6 +11,7 @@ const credsForm = document.querySelector<HTMLFormElement>("#creds-form")!;
 let aoaiClient: AzureOpenAI;
 let threadId: string;
 let assistant: Assistant;
+let ac: AbortController;
 
 credsForm.addEventListener("submit", (event) => event.preventDefault());
 credsForm.addEventListener("change", () => {
@@ -52,15 +53,22 @@ voiceNode.addEventListener("transcriptiondone", async (event) => {
     content: text,
   });
 
-  const run = aoaiClient.beta.threads.runs.stream(threadId!, { assistant_id: assistant.id });
+  ac = new AbortController();
+  let runId = "";
+  const run = aoaiClient.beta.threads.runs.stream(threadId!, { assistant_id: assistant.id }, { signal: ac.signal });
 
   run
+    .on("event", (e) => {
+      if (e.event === "thread.run.created") runId = e.data.id;
+    })
     .on("textCreated", () => console.log("\nassistant > "))
     .on("textDelta", (textDelta) => console.log(textDelta.value))
     .on("toolCallCreated", (toolCall) => console.log(`\nassistant > ${toolCall.type}\n\n`))
     .on("toolCallDelta", (toolCallDelta, snapshot) => {
       // you can print out tool call intermediate results here
     });
+
+  ac.signal.addEventListener("abort", () => aoaiClient.beta.threads.runs.cancel(threadId!, runId));
 
   console.log(response.content);
 });
@@ -71,7 +79,10 @@ const sketch = (p: p5) => {
 
   p.setup = function () {
     const canvas = p.createCanvas(800, 400);
-    canvas.mousePressed(() => voiceNode?.startRecording());
+    canvas.mousePressed(() => {
+      voiceNode?.startRecording();
+      ac?.abort();
+    });
     canvas.mouseReleased(() => voiceNode?.finishRecording());
   };
 
