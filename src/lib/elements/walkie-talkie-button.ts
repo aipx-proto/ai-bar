@@ -1,25 +1,35 @@
+import { attachShadowHtml } from "../wc-utils/attach-html";
 import { emit } from "./events";
 
 export class WalkieTalkieButton extends HTMLElement {
-  connectedCallback() {
-    const button = document.createElement("button");
-    button.innerHTML = `<span part="leading-visual">🎙️</span><span part="label">Hold to talk</span>`;
+  shadowRoot = attachShadowHtml(
+    this,
+    `
+<style>
+:host {
+  } 
+</style>
+<button>
+  <span part="leading-visual">🎙️</span>
+  <span part="label">Hold to talk</span>
+</button>
+    `
+  );
 
-    button.addEventListener("mousedown", () => {
+  connectedCallback() {
+    this.shadowRoot.querySelector("button")!.addEventListener("mousedown", () => {
       emit(this, {
         pttPressed: true,
       });
-      this.querySelector<HTMLElement>(`[part="label"]`)!.innerText = "Release to send";
+      this.shadowRoot.querySelector<HTMLElement>(`[part="label"]`)!.innerText = "Release to send";
     });
 
-    button.addEventListener("mouseup", () => {
+    this.shadowRoot.querySelector("button")!.addEventListener("mouseup", () => {
       emit(this, {
         pttReleased: true,
       });
-      this.querySelector<HTMLElement>(`[part="label"]`)!.innerText = "Hold to talk";
+      this.shadowRoot.querySelector<HTMLElement>(`[part="label"]`)!.innerText = "Hold to talk";
     });
-
-    this.appendChild(button);
   }
 }
 

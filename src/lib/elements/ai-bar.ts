@@ -1,3 +1,4 @@
+import { attachShadowHtml } from "../wc-utils/attach-html";
 import type { AIButtonEventData } from "./events";
 
 export interface SpeechToTextProvider extends HTMLElement {
@@ -25,12 +26,12 @@ export interface AzureOpenAIProvider extends HTMLElement {
 }
 
 export class AIBar extends HTMLElement {
-  connectedCallback() {
-    const stylesheet = document.createElement("style");
-    stylesheet.innerHTML = `
-ai-bar {
+  shadowRoot = attachShadowHtml(
+    this,
+    `
+    <style>
+:host {
   display: flex;
-  font-family: monospace;
 
   *,*::before,*::after {
     box-sizing: border-box;
@@ -42,11 +43,18 @@ ai-bar {
     padding: 0.25rem;
   }
 
+
   transform: translate(var(--offsetX, 0), var(--offsetY, 0));
 }
-    `;
+    </style>
+    <slot name="toolbar"></slot>
+`
+  );
 
-    this.appendChild(stylesheet);
+  connectedCallback() {
+    this.querySelector("drag-handle")?.setAttribute("slot", "toolbar");
+    this.querySelector("aoai-connection-button")?.setAttribute("slot", "toolbar");
+    this.querySelector("walkie-talkie-button")?.setAttribute("slot", "toolbar");
 
     this.querySelector("script")?.remove();
 

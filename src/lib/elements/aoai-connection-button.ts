@@ -1,12 +1,12 @@
+import { attachShadowHtml } from "../wc-utils/attach-html";
 import type { AzureOpenAIProvider } from "./ai-bar";
 
 export class AoaiConnectionButton extends HTMLElement implements AzureOpenAIProvider {
-  connectedCallback() {
-    this.setAttribute("provides", "aoai-credentials");
-
-    this.innerHTML = `
+  shadowRoot = attachShadowHtml(
+    this,
+    `
 <style>
-aoai-connection-button {
+:host {
   .two-column {
     display: grid;
   }
@@ -37,13 +37,16 @@ aoai-connection-button {
     <button>Done</button>
   </form>
 </dialog>
-    `;
+    `
+  );
 
-    this.querySelector("button")?.addEventListener("click", () => {
-      this.querySelector("dialog")?.showModal();
+  connectedCallback() {
+    this.setAttribute("provides", "aoai-credentials");
+    this.shadowRoot.querySelector("button")?.addEventListener("click", () => {
+      this.shadowRoot.querySelector("dialog")?.showModal();
     });
 
-    const credsForm = this.querySelector<HTMLFormElement>("#creds-form")!;
+    const credsForm = this.shadowRoot.querySelector<HTMLFormElement>("#creds-form")!;
 
     credsForm.addEventListener("change", () => {
       const formData = new FormData(credsForm);
@@ -65,9 +68,9 @@ aoai-connection-button {
   }
 
   public getAzureOpenAICredentials() {
-    const endpoint = this.querySelector<HTMLInputElement>("#aoai-endpoint")!.value;
-    const deploymentName = this.querySelector<HTMLInputElement>("#aoai-deployment-name")!.value;
-    const key = this.querySelector<HTMLInputElement>("#aoai-key")!.value;
+    const endpoint = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-endpoint")!.value;
+    const deploymentName = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-deployment-name")!.value;
+    const key = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-key")!.value;
 
     return { endpoint, deploymentName, key };
   }
