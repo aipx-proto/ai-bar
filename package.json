@@ -14,6 +14,7 @@
     "vite": "^5.4.9"
   },
   "dependencies": {
+    "@types/dom-speech-recognition": "^0.0.4",
     "openai": "^4.68.4",
     "p5": "^1.11.0",
     "rxjs": "^7.8.1"

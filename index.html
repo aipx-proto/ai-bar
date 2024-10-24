@@ -24,6 +24,13 @@
 </head>
 
 <body>
+  <ai-button>
+    <script src="/src/loader.ts" type="module"></script>
+    <stt-node></stt-node>
+    <llm-node></llm-node>
+    <tts-node></tts-node>
+    <walkie-talkie-button></walkie-talkie-button>
+  </ai-button>
   <div id="root"></div>
   <voice-node data-api-key="REPLACE_ME"></voice-node>
   <form class="two-column-form" id="creds-form">
@@ -39,7 +46,7 @@
     <label for="aoai-assistant-id">AOAI Assistant ID</label>
     <input type="text" id="aoai-assistant-id" name="aoai-assistant-id" placeholder="asst_XXXXXXXXXXXXXXXXXXXXXXXX" />
   </form>
-  <script type="module" src="/src/main.ts"></script>
+  <!-- <script type="module" src="/src/main.ts"></script> -->
 </body>
 
 </html>
