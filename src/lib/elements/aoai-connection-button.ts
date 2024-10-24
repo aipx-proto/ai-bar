@@ -19,9 +19,6 @@ aoai-connection-button {
     display: grid;
     gap: 1rem;
   }
-
-
-
 }
 </style>
 <button>⚙️</button>
