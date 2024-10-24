@@ -24,29 +24,14 @@
 </head>
 
 <body>
-  <ai-button>
+  <ai-bar>
     <script src="/src/loader.ts" type="module"></script>
     <stt-node></stt-node>
-    <llm-node></llm-node>
+    <llm-node aioa-endpoint="" aioa-key="<replace-me>"></llm-node>
     <tts-node></tts-node>
+    <options-menu></options-menu>
     <walkie-talkie-button></walkie-talkie-button>
-  </ai-button>
-  <div id="root"></div>
-  <voice-node data-api-key="REPLACE_ME"></voice-node>
-  <form class="two-column-form" id="creds-form">
-    <label for="speech-region">Speech Service Region</label>
-    <input type="text" id="speech-region" name="speech-region" placeholder="eastus" />
-    <label for="speech-key">Speech API Key</label>
-    <input type="password" id="speech-key" name="speech-key" />
-    <label for="aoai-endpoint">AOAI Endpoint</label>
-    <input type="url" id="aoai-endpoint" name="aoai-endpoint"
-      placeholder="https://replace-endpoint-name.openai.azure.com/" />
-    <label for="aoai-key">AOAI Key</label>
-    <input type="password" id="aoai-key" name="aoai-key" />
-    <label for="aoai-assistant-id">AOAI Assistant ID</label>
-    <input type="text" id="aoai-assistant-id" name="aoai-assistant-id" placeholder="asst_XXXXXXXXXXXXXXXXXXXXXXXX" />
-  </form>
-  <!-- <script type="module" src="/src/main.ts"></script> -->
+  </ai-bar>
 </body>
 
 </html>

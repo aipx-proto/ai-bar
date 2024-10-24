@@ -1,8 +1,17 @@
 import type { AIButtonEventData } from "./events";
 import type { SttProvider } from "./stt-node";
 
-export class AIButton extends HTMLElement {
+export class AIBar extends HTMLElement {
   connectedCallback() {
+    const stylesheet = document.createElement("style");
+    stylesheet.innerHTML = `
+ai-bar {
+  display: flex;
+}
+    `;
+
+    this.appendChild(stylesheet);
+
     this.querySelector("script")?.remove();
 
     this.addEventListener("event", (event) => {
@@ -37,6 +46,6 @@ export class AIButton extends HTMLElement {
   }
 }
 
-export function defineAIAvatar(tagName = "ai-button") {
-  customElements.define(tagName, AIButton);
+export function defineAIAvatar(tagName = "ai-bar") {
+  customElements.define(tagName, AIBar);
 }
