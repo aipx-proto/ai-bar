@@ -1,6 +1,6 @@
-import type { AoaiCredentialsProvider } from "./ai-bar";
+import type { AzureOpenAIProvider } from "./ai-bar";
 
-export class AoaiConnectionButton extends HTMLElement implements AoaiCredentialsProvider {
+export class AoaiConnectionButton extends HTMLElement implements AzureOpenAIProvider {
   connectedCallback() {
     this.setAttribute("provides", "aoai-credentials");
 

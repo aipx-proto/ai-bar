@@ -1,4 +1,4 @@
-import type { AIBar } from "./ai-bar";
+import type { AIBar, LlmProvider } from "./ai-bar";
 import { emit } from "./events";
 
 export interface OpenAIChatPayload {
@@ -68,7 +68,7 @@ export interface ChatStreamItem {
   usage: null;
 }
 
-export class LlmNode extends HTMLElement {
+export class LlmNode extends HTMLElement implements LlmProvider {
   private messages: ChatMessage[] = [];
   private abortControllers = new Set<AbortController>();
 

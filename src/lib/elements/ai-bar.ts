@@ -1,9 +1,14 @@
 import type { AIButtonEventData } from "./events";
 
-export interface SttProvider extends HTMLElement {
+export interface SpeechToTextProvider extends HTMLElement {
   start(): void;
   stop(): void;
   abort(): void;
+}
+
+export interface TextToSpeechProvider extends HTMLElement {
+  queue(text: string): void;
+  clear(): void;
 }
 
 export interface LlmProvider extends HTMLElement {
@@ -11,7 +16,7 @@ export interface LlmProvider extends HTMLElement {
   clear(): void;
 }
 
-export interface AoaiCredentialsProvider extends HTMLElement {
+export interface AzureOpenAIProvider extends HTMLElement {
   getAzureOpenAICredentials(): {
     endpoint: string;
     deploymentName: string;
@@ -57,14 +62,15 @@ ai-bar {
     if (!typedEvent.detail.pttPressed) return;
     typedEvent.stopPropagation();
 
-    this.querySelector<SttProvider>(`[provides="stt"]`)?.start();
+    this.querySelector<TextToSpeechProvider>(`[provides="tts"]`)?.clear();
+    this.querySelector<SpeechToTextProvider>(`[provides="stt"]`)?.start();
   }
 
   private handleFinishRecording(typedEvent: CustomEvent<AIButtonEventData>) {
     if (!typedEvent.detail.pttReleased) return;
     typedEvent.stopPropagation();
 
-    this.querySelector<SttProvider>(`[provides="stt"]`)?.stop();
+    this.querySelector<SpeechToTextProvider>(`[provides="stt"]`)?.stop();
   }
 
   private handleRecognition(typedEvent: CustomEvent<AIButtonEventData>) {
@@ -78,11 +84,13 @@ ai-bar {
     if (!typedEvent.detail.generated) return;
     typedEvent.stopPropagation();
 
+    // assuming whole sentence
     console.log(typedEvent.detail.generated);
+    this.querySelector<TextToSpeechProvider>(`[provides="tts"]`)?.queue(typedEvent.detail.generated);
   }
 
   public getAzureOpenAICredentials() {
-    const provider = this.querySelector<AoaiCredentialsProvider>(`[provides="aoai-credentials"]`);
+    const provider = this.querySelector<AzureOpenAIProvider>(`[provides="aoai-credentials"]`);
     if (!provider) throw new Error("No credentials provider found");
 
     const cred = provider.getAzureOpenAICredentials();
@@ -92,6 +100,6 @@ ai-bar {
   }
 }
 
-export function defineAIAvatar(tagName = "ai-bar") {
+export function defineAIBar(tagName = "ai-bar") {
   customElements.define(tagName, AIBar);
 }

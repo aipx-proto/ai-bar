@@ -1,7 +1,7 @@
-import type { SttProvider } from "./ai-bar";
+import type { SpeechToTextProvider } from "./ai-bar";
 import { emit } from "./events";
 
-export class SttNode extends HTMLElement implements SttProvider {
+export class SttNode extends HTMLElement implements SpeechToTextProvider {
   // Prevent starting multiple sessions
   private isStarted = false;
   private recognition = new webkitSpeechRecognition();
