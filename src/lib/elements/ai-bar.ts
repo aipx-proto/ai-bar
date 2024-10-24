@@ -41,6 +41,8 @@ ai-bar {
     font: inherit;
     padding: 0.25rem;
   }
+
+  transform: translate(var(--offsetX, 0), var(--offsetY, 0));
 }
     `;
 
@@ -54,7 +56,18 @@ ai-bar {
       this.handleFinishRecording(typedEvent);
       this.handleRecognition(typedEvent);
       this.handleGenerated(typedEvent);
+      this.handleDragged(typedEvent);
     });
+  }
+
+  public getAzureOpenAICredentials() {
+    const provider = this.querySelector<AzureOpenAIProvider>(`[provides="aoai-credentials"]`);
+    if (!provider) throw new Error("No credentials provider found");
+
+    const cred = provider.getAzureOpenAICredentials();
+    if (!cred) throw new Error("No credential provided by the provider");
+
+    return cred;
   }
 
   private handleStartRecording(typedEvent: CustomEvent<AIButtonEventData>) {
@@ -89,14 +102,12 @@ ai-bar {
     this.querySelector<TextToSpeechProvider>(`[provides="tts"]`)?.queue(typedEvent.detail.sentenceGenerated);
   }
 
-  public getAzureOpenAICredentials() {
-    const provider = this.querySelector<AzureOpenAIProvider>(`[provides="aoai-credentials"]`);
-    if (!provider) throw new Error("No credentials provider found");
+  private handleDragged(typedEvent: CustomEvent<AIButtonEventData>) {
+    if (!typedEvent.detail.dragged) return;
+    typedEvent.stopPropagation();
 
-    const cred = provider.getAzureOpenAICredentials();
-    if (!cred) throw new Error("No credential provided by the provider");
-
-    return cred;
+    this.style.setProperty("--offsetX", typedEvent.detail.dragged.deltaX + "px");
+    this.style.setProperty("--offsetY", typedEvent.detail.dragged.deltaY + "px");
   }
 }
 

@@ -3,6 +3,10 @@ export interface AIButtonEventData {
   pttReleased?: boolean;
   recognized?: Recognition;
   sentenceGenerated?: string;
+  dragged?: {
+    deltaX: number;
+    deltaY: number;
+  };
 }
 
 export interface Recognition {
