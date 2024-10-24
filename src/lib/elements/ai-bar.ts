@@ -1,5 +1,23 @@
 import type { AIButtonEventData } from "./events";
-import type { SttProvider } from "./stt-node";
+
+export interface SttProvider extends HTMLElement {
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+
+export interface LlmProvider extends HTMLElement {
+  submit(text: string): void;
+  clear(): void;
+}
+
+export interface AoaiCredentialsProvider extends HTMLElement {
+  getAzureOpenAICredentials(): {
+    endpoint: string;
+    deploymentName: string;
+    key: string;
+  };
+}
 
 export class AIBar extends HTMLElement {
   connectedCallback() {
@@ -19,6 +37,7 @@ ai-bar {
       this.handleStartRecording(typedEvent);
       this.handleFinishRecording(typedEvent);
       this.handleRecognition(typedEvent);
+      this.handleGenerated(typedEvent);
     });
 
     this.addEventListener;
@@ -28,21 +47,38 @@ ai-bar {
     if (!typedEvent.detail.pttPressed) return;
     typedEvent.stopPropagation();
 
-    this.querySelector<SttProvider>(`[data-node="stt"]`)?.start();
+    this.querySelector<SttProvider>(`[provides="stt"]`)?.start();
   }
 
   private handleFinishRecording(typedEvent: CustomEvent<AIButtonEventData>) {
     if (!typedEvent.detail.pttReleased) return;
     typedEvent.stopPropagation();
 
-    this.querySelector<SttProvider>(`[data-node="stt"]`)?.stop();
+    this.querySelector<SttProvider>(`[provides="stt"]`)?.stop();
   }
 
   private handleRecognition(typedEvent: CustomEvent<AIButtonEventData>) {
     if (!typedEvent.detail.recognized) return;
     typedEvent.stopPropagation();
 
-    console.log(typedEvent.detail.recognized.text);
+    this.querySelector<LlmProvider>(`[provides="llm"]`)?.submit(typedEvent.detail.recognized.text);
+  }
+
+  private handleGenerated(typedEvent: CustomEvent<AIButtonEventData>) {
+    if (!typedEvent.detail.generated) return;
+    typedEvent.stopPropagation();
+
+    console.log(typedEvent.detail.generated);
+  }
+
+  public getAzureOpenAICredentials() {
+    const provider = this.querySelector<AoaiCredentialsProvider>(`[provides="aoai-credentials"]`);
+    if (!provider) throw new Error("No credentials provider found");
+
+    const cred = provider.getAzureOpenAICredentials();
+    if (!cred) throw new Error("No credential provided by the provider");
+
+    return cred;
   }
 }
 

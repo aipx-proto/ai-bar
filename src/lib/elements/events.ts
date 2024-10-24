@@ -2,6 +2,7 @@ export interface AIButtonEventData {
   pttPressed?: boolean;
   pttReleased?: boolean;
   recognized?: Recognition;
+  generated?: string;
 }
 
 export interface Recognition {

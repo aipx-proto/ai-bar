@@ -1,5 +1,9 @@
-export class OptionsMenu extends HTMLElement {
+import type { AoaiCredentialsProvider } from "./ai-bar";
+
+export class OptionsMenu extends HTMLElement implements AoaiCredentialsProvider {
   connectedCallback() {
+    this.setAttribute("provides", "aoai-credentials");
+
     this.innerHTML = `
 <style>
 options-menu {
@@ -25,6 +29,8 @@ options-menu {
       <label for="aoai-endpoint">AOAI Endpoint</label>
       <input type="url" id="aoai-endpoint" name="aoai-endpoint"
         placeholder="https://replace-endpoint-name.openai.azure.com/" />
+      <label for="aoai-deployment-name">AOAI Deployment Name</label>
+      <input type="text" id="aoai-deployment-name" name="aoai-deployment-name" placeholder="my-gpt-4o" />
       <label for="aoai-key">AOAI Key</label>
       <input type="password" id="aoai-key" name="aoai-key" />
     </div>
@@ -56,6 +62,14 @@ options-menu {
         field.value = value as string;
       });
     }
+  }
+
+  public getAzureOpenAICredentials() {
+    const endpoint = this.querySelector<HTMLInputElement>("#aoai-endpoint")!.value;
+    const deploymentName = this.querySelector<HTMLInputElement>("#aoai-deployment-name")!.value;
+    const key = this.querySelector<HTMLInputElement>("#aoai-key")!.value;
+
+    return { endpoint, deploymentName, key };
   }
 }
 

@@ -1,10 +1,5 @@
+import type { SttProvider } from "./ai-bar";
 import { emit } from "./events";
-
-export interface SttProvider extends HTMLElement {
-  start(): void;
-  stop(): void;
-  abort(): void;
-}
 
 export class SttNode extends HTMLElement implements SttProvider {
   // Prevent starting multiple sessions
@@ -17,7 +12,7 @@ export class SttNode extends HTMLElement implements SttProvider {
   }
 
   connectedCallback() {
-    this.setAttribute("data-node", "stt");
+    this.setAttribute("provides", "stt");
   }
 
   private initSession() {
