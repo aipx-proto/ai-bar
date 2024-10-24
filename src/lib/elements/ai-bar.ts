@@ -81,12 +81,12 @@ ai-bar {
   }
 
   private handleGenerated(typedEvent: CustomEvent<AIButtonEventData>) {
-    if (!typedEvent.detail.generated) return;
+    if (!typedEvent.detail.sentenceGenerated) return;
     typedEvent.stopPropagation();
 
     // assuming whole sentence
-    console.log(typedEvent.detail.generated);
-    this.querySelector<TextToSpeechProvider>(`[provides="tts"]`)?.queue(typedEvent.detail.generated);
+    console.log(typedEvent.detail.sentenceGenerated);
+    this.querySelector<TextToSpeechProvider>(`[provides="tts"]`)?.queue(typedEvent.detail.sentenceGenerated);
   }
 
   public getAzureOpenAICredentials() {

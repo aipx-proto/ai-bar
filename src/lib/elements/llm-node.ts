@@ -85,6 +85,12 @@ export class LlmNode extends HTMLElement implements LlmProvider {
     const ac = new AbortController();
     this.abortControllers.add(ac);
     const response = this.getChatStream(this.messages, undefined, ac.signal);
+    const segmenter = this.createSentenceSegmenter();
+
+    segmenter.sentenceEmitter.addEventListener("sentence", (event) => {
+      const sentence = (event as CustomEvent<string>).detail;
+      emit(this, { sentenceGenerated: sentence });
+    });
 
     for await (const item of response) {
       // create an assistant message if none exists
@@ -98,8 +104,10 @@ export class LlmNode extends HTMLElement implements LlmProvider {
       if (!delta) continue;
 
       lastMessage.content += delta;
-      emit(this, { generated: delta });
+      segmenter.enqueue(delta);
     }
+
+    segmenter.flush();
   }
 
   private async *getChatStream(messages: ChatMessage[], config?: Partial<OpenAIChatPayload>, abortSignal?: AbortSignal): AsyncGenerator<ChatStreamItem> {
@@ -162,6 +170,44 @@ export class LlmNode extends HTMLElement implements LlmProvider {
         yield item;
       }
     }
+  }
+
+  private createSentenceSegmenter() {
+    const sentenceEmitter = new EventTarget();
+
+    let buffer = "";
+
+    const enqueue = (text: string) => {
+      const sentences = this.splitBySentence(buffer + text);
+      // the last sentence is incomplete. only emit the first n-1 sentences
+
+      const completeSpeech = sentences.slice(0, -1).join("");
+      if (completeSpeech.trim()) {
+        sentenceEmitter.dispatchEvent(new CustomEvent("sentence", { detail: completeSpeech }));
+      }
+
+      buffer = sentences.at(-1) ?? "";
+    };
+
+    function flush() {
+      if (buffer.trim()) {
+        sentenceEmitter.dispatchEvent(new CustomEvent("sentence", { detail: buffer }));
+        buffer = "";
+      }
+    }
+
+    return {
+      sentenceEmitter,
+      flush,
+      enqueue,
+    };
+  }
+
+  private splitBySentence(input: string): string[] {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: "sentence" });
+    const iterator = segmenter.segment(input);
+    const items = [...iterator].map((item) => item.segment);
+    return items;
   }
 }
 

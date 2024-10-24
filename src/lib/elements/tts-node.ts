@@ -12,6 +12,13 @@ export class TtsNode extends HTMLElement implements TextToSpeechProvider {
 
   queue(text: string) {
     const utterance = new SpeechSynthesisUtterance(text);
+    const preferredVoices = ["Microsoft Sonia Online (Natural) - English (United Kingdom)", "Arthur"];
+
+    const matchedVoice = this.synth.getVoices().find((voice) => preferredVoices.includes(voice.name));
+    if (matchedVoice) {
+      utterance.voice = matchedVoice;
+    }
+
     this.synth.speak(utterance);
   }
 
