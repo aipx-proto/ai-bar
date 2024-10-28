@@ -1,4 +1,4 @@
-import type { TextToSpeechProvider } from "./ai-bar";
+import type { TextToSpeechProvider } from "../types";
 
 export class TtsNode extends HTMLElement implements TextToSpeechProvider {
   private synth = window.speechSynthesis;

@@ -1,5 +1,6 @@
 import { concatMap, filter, Observable, Subject, Subscription } from "rxjs";
-import type { AIBar, TextToSpeechProvider } from "./ai-bar";
+import type { AIBar } from "../ai-bar";
+import type { TextToSpeechProvider } from "../types";
 
 export function defineAzureTtsNode(tagName = "azure-tts-node") {
   customElements.define(tagName, AzureTtsNode);

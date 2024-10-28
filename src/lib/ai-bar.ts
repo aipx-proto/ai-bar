@@ -1,42 +1,6 @@
-import { attachShadowHtml } from "../wc-utils/attach-html";
-import type { AIBarEventDetail } from "./events";
-
-export interface SpeechToTextProvider extends HTMLElement {
-  start(): void;
-  stop(): void;
-  abort(): void;
-}
-
-export interface TextToSpeechProvider extends HTMLElement {
-  queue(text: string): void;
-  clear(): void;
-}
-
-export interface LlmProvider extends HTMLElement {
-  submit(text: string): void;
-  clear(): void;
-  registerTools?(tools: Tool[]): void;
-  appendAssitanceMessage(text: string): void;
-}
-
-export interface VisionProvider extends HTMLElement {
-  getImageDataUrl(): Promise<string>;
-}
-
-export interface AzureConnectionProvider extends HTMLElement {
-  getAzureConnection(): {
-    aoaiEndpoint: string;
-    aoaiDeploymentName: string;
-    aoaiKey: string;
-    speechRegion: string;
-    speechKey: string;
-  };
-}
-
-export interface Tool {
-  name: string;
-  parameterOptions: string[];
-}
+import type { AIBarEventDetail } from "./elements/events";
+import type { AzureConnectionProvider, LlmProvider, SpeechToTextProvider, TextToSpeechProvider, Tool } from "./types";
+import { attachShadowHtml } from "./wc-utils/attach-html";
 
 export class AIBar extends HTMLElement {
   shadowRoot = attachShadowHtml(

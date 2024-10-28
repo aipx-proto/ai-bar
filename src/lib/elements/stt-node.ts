@@ -1,4 +1,4 @@
-import type { SpeechToTextProvider } from "./ai-bar";
+import type { SpeechToTextProvider } from "../ai-bar";
 import { emit } from "./events";
 
 export class SttNode extends HTMLElement implements SpeechToTextProvider {

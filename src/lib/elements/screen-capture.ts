@@ -1,5 +1,5 @@
+import type { VisionProvider } from "../types";
 import { attachShadowHtml } from "../wc-utils/attach-html";
-import type { VisionProvider } from "./ai-bar";
 
 export class ScreenCapture extends HTMLElement implements VisionProvider {
   private activeStream: MediaStream | null = null;

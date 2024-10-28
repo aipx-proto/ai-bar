@@ -1,4 +1,4 @@
-import { defineAIBar } from "./lib/elements/ai-bar";
+import { defineAIBar } from "./lib/ai-bar";
 import { defineAzureConnection } from "./lib/elements/azure-connection";
 import { defineAzureTtsNode } from "./lib/elements/azure-tts-node";
 import { defineDragHandle } from "./lib/elements/drag-handle";
