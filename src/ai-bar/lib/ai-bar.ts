@@ -13,11 +13,11 @@ export class AIBar extends HTMLElement {
   }
 
   #widget-container {
-    bottom: 0;
-    right: 0;
+    top: 16px;
+    left: 50%;
     position: fixed;
     display: flex;
-    transform: translate(var(--offsetX, 0), var(--offsetY, 0));
+    transform: translate(var(--offsetX, -50%), var(--offsetY, 0));
     box-shadow: 0 3px 7px 0 rgba(0, 0, 0, .13), 0 1px 2px 0 rgba(0, 0, 0, .11);
     z-index: 2147483647;
   }
