@@ -22,6 +22,14 @@ export class ScreenCapture extends HTMLElement {
 
     video {
       visibility: hidden
+      width: 0;
+      height: 0;
+    }
+
+    :host:not([debug]) {
+      canvas {
+        display: none;        
+      }
     }
     </style>
     <button title="Capture Screen">📸</button>
@@ -64,8 +72,12 @@ export class ScreenCapture extends HTMLElement {
 
   private drawVideoFrame() {
     if (!this.activeStream) return;
-    this.canvas.width = this.video.videoWidth;
-    this.canvas.height = this.video.videoHeight;
+
+    const maxSideLength = 1920;
+    const scaleDownFactor = Math.max(this.video.videoWidth, this.video.videoHeight) / maxSideLength;
+
+    this.canvas.width = this.video.videoWidth / scaleDownFactor;
+    this.canvas.height = this.video.videoHeight / scaleDownFactor;
     this.context.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
     this.video.requestVideoFrameCallback(this.drawVideoFrame);
   }
