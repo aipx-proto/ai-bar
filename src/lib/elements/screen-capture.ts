@@ -1,6 +1,7 @@
 import { attachShadowHtml } from "../wc-utils/attach-html";
+import type { VisionProvider } from "./ai-bar";
 
-export class ScreenCapture extends HTMLElement {
+export class ScreenCapture extends HTMLElement implements VisionProvider {
   private activeStream: MediaStream | null = null;
   private video!: HTMLVideoElement;
   private canvas!: HTMLCanvasElement;
@@ -50,6 +51,10 @@ export class ScreenCapture extends HTMLElement {
         this.start();
       }
     });
+  }
+
+  public async getImageDataUrl() {
+    return this.canvas.toDataURL("image/webp");
   }
 
   private async start() {

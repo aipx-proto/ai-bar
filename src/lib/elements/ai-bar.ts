@@ -19,6 +19,10 @@ export interface LlmProvider extends HTMLElement {
   appendAssitanceMessage(text: string): void;
 }
 
+export interface VisionProvider extends HTMLElement {
+  getImageDataUrl(): Promise<string>;
+}
+
 export interface AzureConnectionProvider extends HTMLElement {
   getAzureConnection(): {
     aoaiEndpoint: string;
