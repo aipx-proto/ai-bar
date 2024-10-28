@@ -28,7 +28,7 @@ export class TextChat extends HTMLElement {
 
 </style>
 <div class="popover-container">
-  <button popovertarget="chat-view">💬</button>
+  <button popovertarget="chat-view" title="Text chat">💬</button>
   <form data-popover-surface>
     <input name="prompt" type="text" />
     <div id="thread"></div>

@@ -1,8 +1,10 @@
-export interface AIButtonEventData {
+export interface AIBarEventDetail {
+  hide?: boolean;
   pttPressed?: boolean;
   pttReleased?: boolean;
   recognized?: Recognition;
   sentenceGenerated?: string;
+  fullResponseGenerated?: string;
   textSubmitted?: string;
   dragged?: {
     deltaX: number;
@@ -15,9 +17,9 @@ export interface Recognition {
   isFinal: boolean;
 }
 
-export function emit(source: HTMLElement, data: AIButtonEventData) {
+export function emit(source: HTMLElement, data: AIBarEventDetail) {
   source.dispatchEvent(
-    new CustomEvent<AIButtonEventData>("event", {
+    new CustomEvent<AIBarEventDetail>("event", {
       detail: data,
       bubbles: true,
     })

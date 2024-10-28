@@ -2,6 +2,7 @@ import type { TextToSpeechProvider } from "./ai-bar";
 
 export class TtsNode extends HTMLElement implements TextToSpeechProvider {
   private synth = window.speechSynthesis;
+  private unspokenQueue: SpeechSynthesisUtterance[] = [];
 
   constructor() {
     super();
@@ -23,10 +24,24 @@ export class TtsNode extends HTMLElement implements TextToSpeechProvider {
     const bestVoice = availableVoices.sort((a, b) => preferredVoicesURIs.indexOf(a.voiceURI) - preferredVoicesURIs.indexOf(b.voiceURI)).at(0);
     if (bestVoice) utterance.voice = bestVoice;
 
-    this.synth.speak(utterance);
+    if (this.synth.speaking) {
+      this.unspokenQueue.push(utterance);
+    } else {
+      this.synth.speak(utterance);
+      utterance.onend = () => this.speakUntilEmpty();
+    }
+  }
+
+  speakUntilEmpty() {
+    if (this.unspokenQueue.length) {
+      const utterance = this.unspokenQueue.shift()!;
+      this.synth.speak(utterance);
+      utterance.onend = () => this.speakUntilEmpty();
+    }
   }
 
   clear() {
+    this.unspokenQueue = [];
     this.synth.cancel();
   }
 }

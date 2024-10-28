@@ -79,6 +79,13 @@ export class LlmNode extends HTMLElement implements LlmProvider {
   public async clear() {
     this.messages = [];
   }
+
+  public appendAssitanceMessage(text: string) {
+    this.messages.push({ role: "assistant", content: text });
+
+    emit(this, { sentenceGenerated: text });
+  }
+
   public async submit(text: string) {
     this.messages.push({ role: "user", content: [{ type: "text", text }] });
 
@@ -111,7 +118,7 @@ export class LlmNode extends HTMLElement implements LlmProvider {
   }
 
   private async *getChatStream(messages: ChatMessage[], config?: Partial<OpenAIChatPayload>, abortSignal?: AbortSignal): AsyncGenerator<ChatStreamItem> {
-    const credentials = this.closest<AIBar>("ai-bar")?.getAzureOpenAICredentials();
+    const credentials = this.closest<AIBar>("ai-bar")?.getAzureConnection();
     if (!credentials) throw new Error("Unable to get credentials from the closest <ai-bar>. Did you forget to provide them?");
 
     const payload = {
@@ -120,15 +127,18 @@ export class LlmNode extends HTMLElement implements LlmProvider {
       ...config,
     };
 
-    const stream = await fetch(`${credentials.endpoint}/openai/deployments/${credentials.deploymentName}/chat/completions?api-version=2024-10-01-preview`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": credentials.key,
-      },
-      body: JSON.stringify({ ...payload, stream: true }),
-      signal: abortSignal,
-    }).catch((e) => {
+    const stream = await fetch(
+      `${credentials.aoaiEndpoint}/openai/deployments/${credentials.aoaiDeploymentName}/chat/completions?api-version=2024-10-01-preview`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": credentials.aoaiKey,
+        },
+        body: JSON.stringify({ ...payload, stream: true }),
+        signal: abortSignal,
+      }
+    ).catch((e) => {
       console.error(e);
       throw e;
     });

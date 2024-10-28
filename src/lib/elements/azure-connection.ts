@@ -1,7 +1,7 @@
 import { attachShadowHtml } from "../wc-utils/attach-html";
-import type { AzureOpenAIProvider } from "./ai-bar";
+import type { AzureConnectionProvider } from "./ai-bar";
 
-export class AoaiConnectionButton extends HTMLElement implements AzureOpenAIProvider {
+export class AoaiConnectionButton extends HTMLElement implements AzureConnectionProvider {
   shadowRoot = attachShadowHtml(
     this,
     `
@@ -21,7 +21,7 @@ export class AoaiConnectionButton extends HTMLElement implements AzureOpenAIProv
   }
 }
 </style>
-<button>⚙️</button>
+<button title="Setup">⚙️</button>
 <dialog style="width: min(40rem, calc(100vw - 32px))">
   <h2>Azure OpenAI Connection</h2>
   <form method="dialog" id="creds-form">
@@ -29,10 +29,18 @@ export class AoaiConnectionButton extends HTMLElement implements AzureOpenAIProv
       <label for="aoai-endpoint">AOAI Endpoint</label>
       <input type="url" id="aoai-endpoint" name="aoai-endpoint"
         placeholder="https://replace-endpoint-name.openai.azure.com/" />
+
       <label for="aoai-deployment-name">AOAI Deployment Name</label>
       <input type="text" id="aoai-deployment-name" name="aoai-deployment-name" placeholder="my-gpt-4o" />
+
       <label for="aoai-key">AOAI Key</label>
       <input type="password" id="aoai-key" name="aoai-key" />
+
+      <label for="speech-region">Speech region</label>
+      <input type="text" id="speech-region" name="speech-region" placeholder="eastus" />
+
+      <label for="speech-key">Speech key</label>
+      <input type="password" id="speech-key" name="speech-key" />
     </div>
     <button>Done</button>
   </form>
@@ -67,15 +75,17 @@ export class AoaiConnectionButton extends HTMLElement implements AzureOpenAIProv
     }
   }
 
-  public getAzureOpenAICredentials() {
-    const endpoint = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-endpoint")!.value;
-    const deploymentName = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-deployment-name")!.value;
-    const key = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-key")!.value;
+  public getAzureConnection() {
+    const aoaiEndpoint = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-endpoint")!.value;
+    const aoaiDeploymentName = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-deployment-name")!.value;
+    const aoaiKey = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-key")!.value;
+    const speechRegion = this.shadowRoot.querySelector<HTMLInputElement>("#speech-region")!.value;
+    const speechKey = this.shadowRoot.querySelector<HTMLInputElement>("#speech-key")!.value;
 
-    return { endpoint, deploymentName, key };
+    return { aoaiEndpoint, aoaiDeploymentName, aoaiKey, speechRegion, speechKey };
   }
 }
 
-export function defineAoaiConnectionButton(tagName = "aoai-connection-button") {
+export function defineAzureConnection(tagName = "azure-connection") {
   customElements.define(tagName, AoaiConnectionButton);
 }
