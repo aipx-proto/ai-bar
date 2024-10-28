@@ -88,11 +88,13 @@ export class LlmNode extends HTMLElement implements LlmProvider {
   }
 
   public async submit(text: string) {
+    const contextImage = await this.closest<AIBar>("ai-bar")?.getContextVision();
+
     this.messages.push({ role: "user", content: [{ type: "text", text }] });
 
     const ac = new AbortController();
     this.abortControllers.add(ac);
-    const response = this.getChatStream(this.messages, undefined, ac.signal);
+    const response = this.getChatStream(this.withContextImage(this.messages, contextImage), undefined, ac.signal);
     const segmenter = this.createSentenceSegmenter();
 
     segmenter.sentenceEmitter.addEventListener("sentence", (event) => {
@@ -116,6 +118,30 @@ export class LlmNode extends HTMLElement implements LlmProvider {
     }
 
     segmenter.flush();
+  }
+
+  private withContextImage(messages: ChatMessage[], maybeContextImageDataUrl?: string | null) {
+    if (!maybeContextImageDataUrl) return messages;
+    const lastMessage = messages.at(-1);
+    if (lastMessage?.role !== "user") return messages;
+
+    const lastMessageParts =
+      typeof lastMessage.content === "string" ? [{ type: "text", text: lastMessage.content } as ChatMessageTextPart] : lastMessage.content;
+    const decoratedMessage = {
+      ...lastMessage,
+      content: [
+        ...lastMessageParts,
+        {
+          type: "image_url",
+          image_url: {
+            url: maybeContextImageDataUrl,
+            detail: "auto",
+          },
+        },
+      ],
+    } as ChatMessage;
+
+    return [...messages.slice(0, -1), decoratedMessage];
   }
 
   private async *getChatStream(messages: ChatMessage[], config?: Partial<OpenAIChatPayload>, abortSignal?: AbortSignal): AsyncGenerator<ChatStreamItem> {

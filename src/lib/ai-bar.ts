@@ -1,5 +1,5 @@
 import type { AIBarEventDetail } from "./elements/events";
-import type { AzureConnectionProvider, LlmProvider, SpeechToTextProvider, TextToSpeechProvider, Tool } from "./types";
+import type { AzureConnectionProvider, LlmProvider, SpeechToTextProvider, TextToSpeechProvider, Tool, VisionProvider } from "./types";
 import { attachShadowHtml } from "./wc-utils/attach-html";
 
 export class AIBar extends HTMLElement {
@@ -74,6 +74,11 @@ export class AIBar extends HTMLElement {
 
   public speak(content: string) {
     this.querySelector<LlmProvider>(`[provides*="llm"]`)?.appendAssitanceMessage(content);
+  }
+
+  public async getContextVision(): Promise<string | null> {
+    const url = (await this.querySelector<VisionProvider>(`[provides*="vision"]`)?.getImageDataUrl()) ?? null;
+    return url;
   }
 
   private handleStartRecording(typedEvent: CustomEvent<AIBarEventDetail>) {

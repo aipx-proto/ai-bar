@@ -43,7 +43,7 @@ export class ScreenCapture extends HTMLElement implements VisionProvider {
     this.canvas = this.shadowRoot.querySelector("canvas")!;
     this.context = this.canvas.getContext("2d")!;
 
-    this.setAttribute("provides", "toolbar-item");
+    this.setAttribute("provides", "toolbar-item vision");
     this.shadowRoot.querySelector("button")?.addEventListener("click", async () => {
       if (this.activeStream) {
         this.stop();
