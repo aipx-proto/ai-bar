@@ -1,6 +1,6 @@
 import type { AIBar } from "../ai-bar";
+import { emit } from "../ai-bar";
 import type { LlmProvider } from "../types";
-import { emit } from "./events";
 
 export interface OpenAIChatPayload {
   messages: ChatMessage[];

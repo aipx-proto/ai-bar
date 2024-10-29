@@ -1,4 +1,4 @@
-import type { VisionProvider } from "../types";
+import type { VisionProvider } from "../ai-bar";
 import { attachShadowHtml } from "../wc-utils/attach-html";
 
 export class ScreenCapture extends HTMLElement implements VisionProvider {

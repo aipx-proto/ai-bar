@@ -1,5 +1,5 @@
 import type { SpeechToTextProvider } from "../ai-bar";
-import { emit } from "./events";
+import { emit } from "../ai-bar";
 
 export class SttNode extends HTMLElement implements SpeechToTextProvider {
   // Prevent starting multiple sessions

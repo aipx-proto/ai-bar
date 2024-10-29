@@ -1,6 +1,9 @@
-import type { AIBarEventDetail } from "./elements/events";
+import type { AIBarEventDetail } from "./events";
 import type { AzureConnectionProvider, LlmProvider, SpeechToTextProvider, TextToSpeechProvider, Tool, VisionProvider } from "./types";
 import { attachShadowHtml } from "./wc-utils/attach-html";
+
+export * from "./events";
+export * from "./types";
 
 export class AIBar extends HTMLElement {
   shadowRoot = attachShadowHtml(

@@ -1,4 +1,4 @@
-import type { AzureConnectionProvider } from "../types";
+import type { AzureConnectionProvider } from "../ai-bar";
 import { attachShadowHtml } from "../wc-utils/attach-html";
 
 export class AoaiConnectionButton extends HTMLElement implements AzureConnectionProvider {

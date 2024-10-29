@@ -1,5 +1,5 @@
+import { emit } from "../ai-bar";
 import { attachShadowHtml } from "../wc-utils/attach-html";
-import { emit } from "./events";
 
 export class HideBar extends HTMLElement {
   shadowRoot = attachShadowHtml(this, `<button title="Hide">😶‍🌫️</button>`);
