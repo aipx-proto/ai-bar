@@ -19,7 +19,6 @@ export class AISandbox extends HTMLElement {
 <slot></slot>
     `
   );
-  connectedCallback() {}
 }
 
 export function defineAISandbox(tagName = "ai-sandbox") {

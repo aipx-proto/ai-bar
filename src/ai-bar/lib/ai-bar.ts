@@ -17,6 +17,7 @@ export class AIBar extends HTMLElement {
     left: 50%;
     position: fixed;
     display: flex;
+    width: max-content;
     transform: translate(calc(var(--offsetX, 0px) - 50%), var(--offsetY, 0));
     box-shadow: 0 3px 7px 0 rgba(0, 0, 0, .13), 0 1px 2px 0 rgba(0, 0, 0, .11);
     z-index: 2147483647;
@@ -68,7 +69,7 @@ export class AIBar extends HTMLElement {
     this.querySelector<LlmProvider>(`[provides*="llm"]`)?.registerTools?.(options?.tools ?? []);
   }
 
-  public endRecording() {
+  public finishRecording() {
     this.querySelector<SpeechToTextProvider>(`[provides*="stt"]`)?.stop();
   }
 
