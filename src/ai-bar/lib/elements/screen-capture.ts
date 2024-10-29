@@ -33,7 +33,7 @@ export class ScreenCapture extends HTMLElement implements VisionProvider {
       }
     }
     </style>
-    <button title="Capture Screen">📸</button>
+    <button title="Capture Screen" aria-pressed="false">📸</button>
     <video autoplay playsinline muted></video>
     <canvas></canvas>
   `
@@ -59,7 +59,9 @@ export class ScreenCapture extends HTMLElement implements VisionProvider {
 
   private async start() {
     if (this.activeStream) return;
+
     this.activeStream = await navigator.mediaDevices.getDisplayMedia({
+      selfBrowserSurface: "include",
       video: {
         frameRate: {
           ideal: 1,
@@ -67,7 +69,10 @@ export class ScreenCapture extends HTMLElement implements VisionProvider {
         },
       },
       audio: false,
-    });
+    } as any);
+
+    this.shadowRoot.querySelector("button")!.setAttribute("aria-pressed", "true");
+    this.shadowRoot.querySelector("button")!.textContent = "🛑";
 
     this.video.srcObject = this.activeStream;
     console.log("connected to video");
@@ -90,6 +95,8 @@ export class ScreenCapture extends HTMLElement implements VisionProvider {
   private stop() {
     this.activeStream?.getTracks()?.forEach((track) => track.stop());
     this.activeStream = null;
+    this.shadowRoot.querySelector("button")!.setAttribute("aria-pressed", "false");
+    this.shadowRoot.querySelector("button")!.textContent = "📸";
   }
 }
 
