@@ -1,7 +1,8 @@
-import { emit } from "../ai-bar";
+import type { RecordingStatusProvider } from "../ai-bar";
+import { emit } from "../events";
 import { attachShadowHtml } from "../wc-utils/attach-html";
 
-export class WalkieTalkieButton extends HTMLElement {
+export class WalkieTalkieButton extends HTMLElement implements RecordingStatusProvider {
   shadowRoot = attachShadowHtml(
     this,
     `
@@ -13,7 +14,7 @@ export class WalkieTalkieButton extends HTMLElement {
   );
 
   connectedCallback() {
-    this.setAttribute("provides", "toolbar-item");
+    this.setAttribute("provides", "toolbar-item recording-status");
     this.shadowRoot.querySelector("button")!.addEventListener("mousedown", () => {
       emit(this, {
         pttPressed: true,
@@ -27,6 +28,14 @@ export class WalkieTalkieButton extends HTMLElement {
       });
       this.shadowRoot.querySelector<HTMLElement>(`[part="label"]`)!.innerText = "Hold to talk";
     });
+  }
+
+  setIsReording(isRecording: boolean): void {
+    if (isRecording) {
+      this.shadowRoot.querySelector<HTMLElement>(`[part="label"]`)!.innerText = "Release to send";
+    } else {
+      this.shadowRoot.querySelector<HTMLElement>(`[part="label"]`)!.innerText = "Hold to talk";
+    }
   }
 }
 

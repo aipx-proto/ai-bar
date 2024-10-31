@@ -1,5 +1,5 @@
 import type { AIBarEventDetail } from "./events";
-import type { AzureConnectionProvider, LlmProvider, SpeechToTextProvider, TextToSpeechProvider, Tool, VisionProvider } from "./types";
+import type { AzureConnectionProvider, LlmProvider, RecordingStatusProvider, SpeechToTextProvider, TextToSpeechProvider, Tool, VisionProvider } from "./types";
 import { attachShadowHtml } from "./wc-utils/attach-html";
 
 export * from "./events";
@@ -68,12 +68,13 @@ export class AIBar extends HTMLElement {
   public startRecording(options?: { tools?: Tool[] }) {
     this.querySelector<TextToSpeechProvider>(`[provides*="tts"]`)?.clear();
     this.querySelector<SpeechToTextProvider>(`[provides*="stt"]`)?.start();
-
     this.querySelector<LlmProvider>(`[provides*="llm"]`)?.registerTools?.(options?.tools ?? []);
+    this.querySelector<RecordingStatusProvider>(`[provides*="recording-status"]`)?.setIsReording(true);
   }
 
   public finishRecording() {
     this.querySelector<SpeechToTextProvider>(`[provides*="stt"]`)?.stop();
+    this.querySelector<RecordingStatusProvider>(`[provides*="recording-status"]`)?.setIsReording(false);
   }
 
   public speak(content: string) {

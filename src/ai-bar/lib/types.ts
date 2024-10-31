@@ -17,9 +17,12 @@ export interface LlmProvider extends HTMLElement {
 }
 
 export interface VisionProvider extends HTMLElement {
-  getImageDataUrl(): Promise<string>;
+  getImageDataUrl(): Promise<string | null>;
 }
 
+export interface RecordingStatusProvider extends HTMLElement {
+  setIsReording(isRecording: boolean): void;
+}
 export interface AzureConnectionProvider extends HTMLElement {
   getAzureConnection(): {
     aoaiEndpoint: string;

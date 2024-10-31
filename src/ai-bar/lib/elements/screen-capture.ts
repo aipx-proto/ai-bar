@@ -54,6 +54,7 @@ export class ScreenCapture extends HTMLElement implements VisionProvider {
   }
 
   public async getImageDataUrl() {
+    if (!this.activeStream) return null;
     return this.canvas.toDataURL("image/webp");
   }
 
