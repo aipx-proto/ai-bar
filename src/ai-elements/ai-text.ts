@@ -1,3 +1,4 @@
+import * as htmlparser2 from "htmlparser2";
 import { AOAIAccess } from "./azure-openai-access";
 import { assistant, system, user } from "./lib/message";
 
@@ -27,25 +28,41 @@ export class AIText extends HTMLElement {
 
     this.shadowRoot.innerHTML = "<generating...>";
 
-    client.chat.completions
-      .create({
-        messages: [
-          system`Based on user provided description or placeholder, generate the real label for web app UI. Wrap your response in <ui-label> tag.`,
-          user`<ui-placeholder>Call to action text for user to engage customer support</ui-placeholder>`,
-          assistant`<ui-label>Get help</ui-label>`,
-          user`${this.getAttribute("prompt")}`,
-        ],
-        model: "gpt-4o-mini",
-      })
-      .then((response) => {
-        const completion = response.choices.at(0)?.message.content;
-        if (!completion) throw new Error("No text generated");
+    const responseStream = await client.chat.completions.create({
+      stream: true,
+      messages: [
+        system`You are a skilled UI content designer. Based on user provided description or placeholder, write realist label for web app UI. Wrap your response in <ui-label> tag.`,
+        user`<ui-placeholder>Call to action text for user to engage customer support</ui-placeholder>`,
+        assistant`<ui-label>Get help</ui-label>`,
+        user`${this.getAttribute("prompt")}`,
+      ],
+      model: "gpt-4o-mini",
+    });
 
-        this.shadowRoot.innerHTML = completion;
-      })
-      .catch((error) => {
-        this.shadowRoot.innerHTML = error.message;
-      });
+    let isInTag = false;
+    const parser = new htmlparser2.Parser({
+      onopentag: (name) => {
+        if (name === "ui-label") {
+          isInTag = true;
+        }
+      },
+      ontext: (text) => {
+        if (!isInTag) return;
+        this.shadowRoot!.innerHTML += text;
+      },
+      onclosetag: (name) => {
+        if (name === "ui-label") {
+          isInTag = false;
+        }
+      },
+    });
+
+    for await (const response of responseStream) {
+      const delta = response.choices.at(0)?.delta?.content;
+      if (delta) parser.write(delta);
+    }
+
+    parser.end();
   }
 }
 

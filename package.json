@@ -16,6 +16,7 @@
   "dependencies": {
     "@azure/identity": "^4.5.0",
     "@types/dom-speech-recognition": "^0.0.4",
+    "htmlparser2": "^9.1.0",
     "openai": "^4.68.4",
     "p5": "^1.11.0",
     "rxjs": "^7.8.1"
