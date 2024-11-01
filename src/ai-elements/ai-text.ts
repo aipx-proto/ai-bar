@@ -30,9 +30,9 @@ export class AIText extends HTMLElement {
     client.chat.completions
       .create({
         messages: [
-          system`Generate unformatted plaintext UI label based on user provided goal or instruction`,
-          user`<p placeholder="Customer service CTA button label"></p>`,
-          assistant`<p>Get help</p>`,
+          system`Based on user provided description or placeholder, generate the real label for UI. Wrap your response in <ui-label> tag.`,
+          user`<ui-placeholder>Call to action text for user to engage customer support</ui-placeholder>`,
+          assistant`<ui-label>Get help</ui-label>`,
           user`${this.getAttribute("prompt")}`,
         ],
         model: "gpt-4o-mini",
