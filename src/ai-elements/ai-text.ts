@@ -1,6 +1,6 @@
-import * as htmlparser2 from "htmlparser2";
 import { AOAIAccess } from "./azure-openai-access";
 import { assistant, system, user } from "./lib/message";
+import { getTagInnerHtmlStream, toTextStream as toHtmlStream } from "./lib/parser";
 
 export class AIText extends HTMLElement {
   static observedAttributes = ["prompt"];
@@ -39,30 +39,12 @@ export class AIText extends HTMLElement {
       model: "gpt-4o-mini",
     });
 
-    let isInTag = false;
-    const parser = new htmlparser2.Parser({
-      onopentag: (name) => {
-        if (name === "ui-label") {
-          isInTag = true;
-        }
-      },
-      ontext: (text) => {
-        if (!isInTag) return;
-        this.shadowRoot!.innerHTML += text;
-      },
-      onclosetag: (name) => {
-        if (name === "ui-label") {
-          isInTag = false;
-        }
-      },
+    const htmlStream = toHtmlStream(responseStream);
+    await getTagInnerHtmlStream({
+      tagName: "ui-label",
+      htmlStream,
+      onInnerHtmlDelta: (text) => (this.shadowRoot!.innerHTML += text),
     });
-
-    for await (const response of responseStream) {
-      const delta = response.choices.at(0)?.delta?.content;
-      if (delta) parser.write(delta);
-    }
-
-    parser.end();
   }
 }
 
