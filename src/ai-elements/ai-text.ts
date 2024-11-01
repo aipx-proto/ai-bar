@@ -30,7 +30,7 @@ export class AIText extends HTMLElement {
     client.chat.completions
       .create({
         messages: [
-          system`Based on user provided description or placeholder, generate the real label for UI. Wrap your response in <ui-label> tag.`,
+          system`Based on user provided description or placeholder, generate the real label for web app UI. Wrap your response in <ui-label> tag.`,
           user`<ui-placeholder>Call to action text for user to engage customer support</ui-placeholder>`,
           assistant`<ui-label>Get help</ui-label>`,
           user`${this.getAttribute("prompt")}`,
