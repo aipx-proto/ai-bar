@@ -8,7 +8,7 @@ export class AIText extends HTMLElement {
   shadowRoot = this.attachShadow({ mode: "open" });
 
   connectedCallback() {
-    this.generateTextContent();
+    this.generate();
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -18,11 +18,11 @@ export class AIText extends HTMLElement {
         return;
       }
 
-      this.generateTextContent();
+      this.generate();
     }
   }
 
-  private async generateTextContent() {
+  private async generate() {
     const client = document.querySelector<AOAIAccess>("aoai-access")?.getClient();
     if (!client) throw new Error("Azure OpenAI client not found");
 
@@ -38,6 +38,8 @@ export class AIText extends HTMLElement {
       ],
       model: "gpt-4o-mini",
     });
+
+    this.shadowRoot.innerHTML = "";
 
     const htmlStream = toHtmlStream(responseStream);
     await getTagInnerHtmlStream({
